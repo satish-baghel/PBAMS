@@ -1,10 +1,17 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
+const ConnectDB = require('./api/config/dbs')
+
+//
+const userRoute = require('./api/route/user')
+const collegeRoute = require('./api/route/college')
+//
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
-
+ConnectDB()
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*')
   res.header('Access-Control-Allow-Headers', '*')
@@ -13,8 +20,11 @@ app.use((req, res, next) => {
     return res.status(200).json({})
   }
   next()
-  // return res.status(200).json({});
 })
+
+app.use('/api/user', userRoute)
+app.use('/api/college', collegeRoute)
+
 app.use((req, res, next) => {
   const error = new Error('Not found')
   error.status = 404

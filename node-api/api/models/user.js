@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const { Schema } = mongoose
-
+const aggregatePaginate = require('mongoose-aggregate-paginate-v2')
 const userSchema = new Schema(
   {
     first_name: {
@@ -13,6 +13,7 @@ const userSchema = new Schema(
     },
     middle_name: {
       type: String,
+      default: '',
     },
     email: {
       type: String,
@@ -29,11 +30,11 @@ const userSchema = new Schema(
 
     college: {
       type: Schema.Types.ObjectId,
-      required: true,
+      default: null,
     },
     role: {
       type: Number,
-      enum: [1, 2, 3],
+      enum: [1, 2, 3], // @role [1 = admin 2 = teacher 3 = student]
       required: true,
     },
     phone_number: {
@@ -42,12 +43,19 @@ const userSchema = new Schema(
     },
     join_date: {
       type: Date,
-      required: true,
+      default: null,
+    },
+    flag: {
+      type: Number,
+      default: 4,
+      enum: [1, 2, 3, 4], // @ 1 Activated 2 deactivated 3 Delete 4 New User
     },
   },
   {
     timestamps: true,
   }
 )
+
+userSchema.plugin(aggregatePaginate)
 
 module.exports = mongoose.model('user', userSchema)

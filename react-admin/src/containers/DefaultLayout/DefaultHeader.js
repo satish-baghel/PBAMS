@@ -18,6 +18,9 @@ import {
 } from '@coreui/react'
 import logo from '../../assets/img/brand/logo.png'
 import miniLogo from '../../assets/img/brand/miniLogo.png'
+import { logout } from '../../actions/authAction'
+
+import { connect } from 'react-redux'
 
 const propTypes = {
   children: PropTypes.node,
@@ -55,7 +58,9 @@ class DefaultHeader extends Component {
             </DropdownToggle>
             <DropdownMenu right style={{ right: 'auto' }}>
               <DropdownItem>
-                <i className='fa fa-lock'></i> Logout
+                <div onClick={() => this.props.logout()}>
+                  <i className='fa fa-lock'></i> Logout
+                </div>
               </DropdownItem>
             </DropdownMenu>
           </AppHeaderDropdown>
@@ -70,4 +75,4 @@ class DefaultHeader extends Component {
 DefaultHeader.propTypes = propTypes
 DefaultHeader.defaultProps = defaultProps
 
-export default DefaultHeader
+export default connect(null, { logout })(DefaultHeader)

@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-
+import React, { useEffect, useState } from 'react'
+import PropTypes from 'prop-types'
 import {
   Button,
   Card,
@@ -11,24 +11,36 @@ import {
   Table,
 } from 'reactstrap'
 import DatePicker from 'react-datepicker'
+import Loader from 'react-loader-spinner'
 
 import 'react-datepicker/dist/react-datepicker.css'
-import styled from 'styled-components'
-import { AppSwitch } from '@coreui/react'
 import { Link } from 'react-router-dom'
-
-const Appraisal = (props) => {
+import { AppSwitch } from '@coreui/react'
+import styled from 'styled-components'
+import { userList } from '../../actions/studentAction'
+import { useDispatch, useSelector } from 'react-redux'
+import Moment from 'react-moment'
+const Index = (props) => {
+  //
+  const dispatch = useDispatch()
+  const student = useSelector((state) => state.student)
+  const { studentList, loading } = student
+  //
   const [pageLength, setPageLength] = useState(10)
   const [dateRange, setDateRange] = useState([null, null])
+  const [search, setSearch] = useState('')
   const [startDate, endDate] = dateRange
+  useEffect(() => {
+    dispatch(userList(1, pageLength, search, 3))
+  }, [pageLength, search])
   return (
     <div className='animated fadeIn'>
       <Row>
         <Col xs='12'>
           <Card>
             <CardHeader>
-              <i className='fa fa-university'></i>
-              <strong>Appraisal</strong>
+              <i className='fas fa-user-graduate'></i>
+              <strong>Students</strong>
             </CardHeader>
             <CardBody>
               <Row>
@@ -90,37 +102,67 @@ const Appraisal = (props) => {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>1</td>
-                        <td>
-                          <img src='/assets/img/avatars/7.jpg' alt='' />
-                        </td>
-                        <td>Satish K Baghel</td>
-                        <td>Mca</td>
-                        <td>July-2019</td>
-                        <td>Student</td>
+                      {!loading && studentList.docs.length > 0 ? (
+                        studentList.docs.map((teacher, i) => (
+                          <tr key={i}>
+                            <td>{i + 1}</td>
+                            <td>
+                              <img src={teacher.profilePic} alt='' />
+                            </td>
+                            <td>{teacher.fullName}</td>
+                            <td>{teacher.email}</td>
 
-                        <td>
-                          <AppSwitch
-                            className='d-block mt-1'
-                            variant='3d'
-                            color='primary'
-                            name='status'
-                            checked={true}
-                            label
-                            dataOn={'\u2715'}
-                            dataOff={'\u2713'}
-                            // onClick={() => this.changeActivityFlag(activity)}
-                          />
-                        </td>
-                        <td>
-                          <Link to='/appraisal/view'>
-                            <Button className='btn-brand btn-twitter'>
-                              <i className='fa fa-eye'></i>
-                            </Button>
-                          </Link>
-                        </td>
-                      </tr>
+                            <td>
+                              <Moment format='MMM-YYYY'>
+                                {teacher.join_date}
+                              </Moment>
+                            </td>
+                            <td>
+                              {teacher.role === 2 ? 'Teacher' : 'Student'}
+                            </td>
+                            <td>
+                              <AppSwitch
+                                className='d-block mt-1'
+                                variant='3d'
+                                color='primary'
+                                name='status'
+                                checked={true}
+                                label
+                                dataOn={'\u2715'}
+                                dataOff={'\u2713'}
+                                // onClick={() => this.changeActivityFlag(activity)}
+                              />
+                            </td>
+                            <td>
+                              <Link to='/appraisal/view'>
+                                <Button className='btn-brand btn-twitter'>
+                                  <i className='fa fa-eye'></i>
+                                </Button>
+                              </Link>
+                            </td>
+                          </tr>
+                        ))
+                      ) : studentList.docs.length === 0 ? (
+                        <tr>
+                          <td colSpan='8' className='text-center'>
+                            No approval request found
+                          </td>
+                        </tr>
+                      ) : (
+                        loading && (
+                          <tr>
+                            <td colSpan='8' className='text-center'>
+                              <Loader
+                                type='Puff'
+                                color='#00BFFF'
+                                height={100}
+                                width={100}
+                                timeout={3000} //3 secs
+                              />
+                            </td>
+                          </tr>
+                        )
+                      )}
                     </tbody>
                     <tfoot>
                       <tr>
@@ -145,9 +187,9 @@ const Appraisal = (props) => {
   )
 }
 
-Appraisal.propTypes = {}
+Index.propTypes = {}
 
-export default Appraisal
+export default Index
 
 const InlineTag = styled.div`
   display: flex;

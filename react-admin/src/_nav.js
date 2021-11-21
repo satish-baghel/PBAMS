@@ -1,21 +1,44 @@
-export default {
-  items: [
-    {
-      name: 'Appraisal',
-      url: '/appraisal',
-      icon: 'fa fa-university',
-    },
-  ],
-}
-// <i class="fas fa-university"></i>
-// <i class="fas fa-user-graduate"></i>
-
-// export const studentData = {
+// export default {
 //   items: [
 //     {
-//       name: 'Student',
-//       url: '/dashboard',
-//       icon: 'fa fa-graduation-cap',
+//       name: 'Appraisal',
+//       url: '/appraisal',
+//       icon: 'fa fa-university',
 //     },
 //   ],
 // }
+
+export const AdminNav = {
+  items: [
+    {
+      name: 'Teachers',
+      url: '/teacher',
+      icon: 'fas fa-chalkboard-teacher',
+    },
+    {
+      name: 'Students',
+      url: '/student',
+      icon: 'fas fa-user-graduate',
+    },
+    // {
+    //   name: 'Appraisal',
+    //   url: '/appraisal',
+    //   icon: 'fa fa-university',
+    // },
+    {
+      name: 'Approve Request',
+      url: '/user-approve',
+      icon: 'fas fa-user-lock',
+    },
+  ],
+}
+
+export const TeacherNav = {
+  items: [
+    {
+      name: 'Students',
+      url: '/teacher',
+      icon: 'fas fa-user-graduate',
+    },
+  ],
+}

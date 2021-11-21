@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs')
 var jwt = require('jsonwebtoken')
 const { base64encode, base64decode } = require('nodejs-base64')
 const Email = require('../helper/email')
+const Helper = require('../helper')
 /**
  *  { [admin, user, teacher ] registration } use
  */
@@ -98,13 +99,14 @@ exports.login = async (req, res) => {
       email: { $regex: email, $options: 'i' },
       flag: { $in: [1, 2, 4] },
     })
+    console.log('file: user.js -> line 102 -> adminCheck', adminCheck)
+    if (!adminCheck) {
+      return res.status(401).json({ message: 'Invalid email and password ' })
+    }
     if (adminCheck.flag === 4) {
-      return res.status(409).json({
+      return res.status(401).json({
         message: 'Your profile register successfully please wait for approval ',
       })
-    }
-    if (!adminCheck) {
-      return res.status(409).json({ message: 'Invalid email and password ' })
     }
 
     const checkPassword = await bcrypt.compare(password, adminCheck.password)
@@ -155,12 +157,13 @@ exports.verifyEmail = async (req, res) => {
   }
   try {
     const userObj = await JSON.parse(base64decode(req.query.token))
+    console.log('file: user.js -> line 160 -> userObj', userObj)
     const checkEmail = await UserDB.findOne({
       email: { $regex: userObj.email, $options: 'i' },
       flag: [1, 2, 4],
       role: userObj.role,
     })
-    if (checkEmail.flag === 4) {
+    if (checkEmail && checkEmail.flag === 4) {
       return res.status(409).json({
         message: `Your profile register successfully please wait for approval `,
       })
@@ -236,23 +239,37 @@ exports.UserList = async (req, res) => {
     matchObj.flag = { $in: [1, 2] }
     matchObj.role = 3
   }
+  matchObj.$or = [
+    { fullName: { $regex: search, $options: 'i' } },
+    { email: { $regex: search, $options: 'i' } },
+  ]
   try {
     const teacherAggregate = UserDB.aggregate([
-      { $match: matchObj },
       {
         $project: {
-          first_name: 1,
-          last_name: 1,
-          middle_name: 1,
+          fullName: {
+            $concat: ['$first_name', ' ', '$middle_name', ' ', '$last_name'],
+          },
           email: 1,
           college: 1,
-          phone_number: 1,
           join_date: 1,
+          role: 1,
+          profilePic: 1,
+          flag: 1,
         },
       },
+      { $match: matchObj },
     ])
 
     const result = await UserDB.aggregatePaginate(teacherAggregate, options)
+
+    for (let i = 0; i < result.docs.length; i++) {
+      const element = result.docs[i]
+      element.profilePic = await Helper.getValidImageUrl(
+        element.profilePic,
+        element.fullName
+      )
+    }
     return res.status(200).json({
       message: 'user list has been retrieved',
       result: result,

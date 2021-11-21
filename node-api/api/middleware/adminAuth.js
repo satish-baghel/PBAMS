@@ -8,7 +8,7 @@ module.exports = async (req, res, next) => {
     req.userData = decoded
     const { id } = decoded
     const userData = await UserDB.findById(id)
-    if (userData === null || userData.flag !== 1 || userData.role !== 1) {
+    if (userData === null || userData.flag !== 1) {
       return res.status(401).json({
         message: 'Auth fail',
       })

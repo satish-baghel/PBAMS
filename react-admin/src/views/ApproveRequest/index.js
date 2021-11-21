@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import {
   Button,
@@ -14,21 +14,59 @@ import DatePicker from 'react-datepicker'
 
 import 'react-datepicker/dist/react-datepicker.css'
 import styled from 'styled-components'
-import { AppSwitch } from '@coreui/react'
-import { Link } from 'react-router-dom'
-
+import { approvalRequest, userList } from '../../actions/studentAction'
+import { connect, useDispatch, useSelector } from 'react-redux'
+import Moment from 'react-moment'
+import Loader from 'react-loader-spinner'
+import swal from 'sweetalert'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 const Appraisal = (props) => {
+  const dispatch = useDispatch()
+  //
+  const approve = useSelector((state) => state.approve)
+
+  const { approveList, loading } = approve
   const [pageLength, setPageLength] = useState(10)
+  const [search, setSearch] = useState('')
   const [dateRange, setDateRange] = useState([null, null])
   const [startDate, endDate] = dateRange
+  useEffect(() => {
+    dispatch(userList(1, pageLength, search, 4))
+  }, [pageLength, search])
+
+  //
+
+  const RequestApprove = (data) => {
+    swal({
+      title: 'Are you sure?',
+      text: `Are you sure? You are approved the request ${data.fullName}`,
+      icon: 'warning',
+      buttons: true,
+      dangerMode: true,
+    }).then((willDelete) => {
+      if (willDelete) {
+        props
+          .approvalRequest(data._id)
+          .then((res) => {
+            toast.success(res.data.message)
+            props.userList(1, pageLength, search, 4)
+          })
+          .catch((err) => {
+            toast.error(err.response.data.message)
+          })
+      }
+    })
+  }
   return (
     <div className='animated fadeIn'>
+      <ToastContainer />
       <Row>
         <Col xs='12'>
           <Card>
             <CardHeader>
-              <i className='fa fa-university'></i>
-              <strong>Appraisal</strong>
+              <i className='fas fa-user-lock'></i>
+              <strong>Approve Request</strong>
             </CardHeader>
             <CardBody>
               <Row>
@@ -70,8 +108,9 @@ const Appraisal = (props) => {
                     <label htmlFor='search'>Search</label>
                     <Input
                       type='search'
-                      placeholder='search here'
+                      placeholder='Search here'
                       className='ml-1'
+                      onChange={(e) => setSearch(e.target.value)}
                     />
                   </InlineTag>
                 </Col>
@@ -86,41 +125,58 @@ const Appraisal = (props) => {
                         <th>Joining Date</th>
                         <th>Role Type</th>
                         <th>Status</th>
-                        <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>1</td>
-                        <td>
-                          <img src='/assets/img/avatars/7.jpg' alt='' />
-                        </td>
-                        <td>Satish K Baghel</td>
-                        <td>Mca</td>
-                        <td>July-2019</td>
-                        <td>Student</td>
+                      {!loading && approveList.docs.length > 0 ? (
+                        approveList.docs.map((teacher, i) => (
+                          <tr key={i}>
+                            <td>{i + 1}</td>
+                            <td>
+                              <img src={teacher.profilePic} alt='' />
+                            </td>
+                            <td>{teacher.fullName}</td>
+                            <td>{teacher.email}</td>
 
-                        <td>
-                          <AppSwitch
-                            className='d-block mt-1'
-                            variant='3d'
-                            color='primary'
-                            name='status'
-                            checked={true}
-                            label
-                            dataOn={'\u2715'}
-                            dataOff={'\u2713'}
-                            // onClick={() => this.changeActivityFlag(activity)}
-                          />
-                        </td>
-                        <td>
-                          <Link to='/appraisal/view'>
-                            <Button className='btn-brand btn-twitter'>
-                              <i className='fa fa-eye'></i>
-                            </Button>
-                          </Link>
-                        </td>
-                      </tr>
+                            <td>
+                              <Moment format='MMM-YYYY'>
+                                {teacher.join_date}
+                              </Moment>
+                            </td>
+                            <td>
+                              {teacher.role === 2 ? 'Teacher' : 'Student'}
+                            </td>
+                            <td>
+                              <Button
+                                size='sm'
+                                color='primary'
+                                onClick={() => RequestApprove(teacher)}>
+                                <i className='fas fa-check-circle fa-lg	'></i>
+                              </Button>
+                            </td>
+                          </tr>
+                        ))
+                      ) : approveList.docs.length === 0 ? (
+                        <tr>
+                          <td colSpan='8' className='text-center'>
+                            No approval request found
+                          </td>
+                        </tr>
+                      ) : (
+                        loading && (
+                          <tr>
+                            <td colSpan='8' className='text-center'>
+                              <Loader
+                                type='Puff'
+                                color='#00BFFF'
+                                height={100}
+                                width={100}
+                                timeout={3000} //3 secs
+                              />
+                            </td>
+                          </tr>
+                        )
+                      )}
                     </tbody>
                     <tfoot>
                       <tr>
@@ -131,7 +187,6 @@ const Appraisal = (props) => {
                         <th>Joining Date</th>
                         <th>Role Type</th>
                         <th>Status</th>
-                        <th>Action</th>
                       </tr>
                     </tfoot>
                   </Table>
@@ -147,7 +202,7 @@ const Appraisal = (props) => {
 
 Appraisal.propTypes = {}
 
-export default Appraisal
+export default connect(null, { approvalRequest, userList })(Appraisal)
 
 const InlineTag = styled.div`
   display: flex;

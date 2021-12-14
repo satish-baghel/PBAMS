@@ -54,13 +54,14 @@ exports.get = async (req, res) => {
   }
   let matchObj = {}
   matchObj.title = { $regex: search, $options: 'i' }
-  matchObj.flag = 1
+  matchObj.flag = { $in: [1, 2] }
   try {
     const collegeAggregation = CollegeDB.aggregate([
       { $match: matchObj },
       {
         $project: {
           title: 1,
+          flag: 1,
         },
       },
       { $sort: { createdAt: -1 } },
@@ -69,6 +70,7 @@ exports.get = async (req, res) => {
       collegeAggregation,
       options
     )
+
     return res.status(200).json({
       message: 'College has been retrieved ',
       result: result,

@@ -27,6 +27,7 @@ const FormHooks = (validation) => {
   }
 
   const setDefaultValue = (data) => {
+    console.log('file: FormHook.js -> line 30 -> data', data)
     let newObj = {}
     for (const iterator of data) {
       for (const key in iterator) {

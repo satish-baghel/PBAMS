@@ -9,3 +9,9 @@ exports.getValidImageUrl = async (filename, name = 'SH') => {
   }
   return filename
 }
+
+exports.getValidImage = async (filename) => {
+  filename = process.env.URL + filename
+
+  return filename
+}

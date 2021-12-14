@@ -76,9 +76,18 @@ class Login extends Component {
   }
   render() {
     const { email, password, errors, loginLoading } = this.state
-    const { isAuthenticated, loading } = this.props.auth
-    if (isAuthenticated === true && loading === false) {
-      return <Redirect to='/category' />
+    const { isAuthenticated, loading, admin } = this.props.auth
+
+    if (isAuthenticated === true && loading === false && admin?.role) {
+      if (admin.role === 1) {
+        return <Redirect to='/teacher' />
+      }
+      if (admin.role === 2) {
+        return <Redirect to='/teacher/student' />
+      }
+      if (admin.role === 3) {
+        return <Redirect to='/certificate' />
+      }
     }
     return (
       <div className='app flex-row align-items-center'>

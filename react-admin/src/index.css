@@ -344,12 +344,12 @@ a:hover {
 .card-style {
   min-height: 500px;
 }
-.Toastify__toast--success {
+/* .Toastify__toast--success {
   background: #158b4c !important;
 }
 .Toastify__toast--error {
   background: #cc1a1a !important;
-}
+} */
 .invalid-feedback {
   display: none;
   width: 100%;

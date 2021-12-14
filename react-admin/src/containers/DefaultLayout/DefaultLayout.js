@@ -94,12 +94,12 @@ const DefaultLayout = (props) => {
                   ) : null
                 })}
                 {admin && admin.role === 1 && (
-                  <Redirect from='/' to='/appraisal' />
+                  <Redirect from='/' to='/teacher' />
                 )}
                 {admin && admin.role === 2 && (
-                  <Redirect from='/' to='/teacher/appraisal' />
+                  <Redirect from='/' to='/teacher/student' />
                 )}
-                {!admin && <Redirect from='/' to='/appraisal' />}
+                {!admin && <Redirect from='/' to='/certificate' />}
               </Switch>
             </Suspense>
           </Container>

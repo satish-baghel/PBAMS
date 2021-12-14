@@ -30,6 +30,11 @@ export const AdminNav = {
       url: '/user-approve',
       icon: 'fas fa-user-lock',
     },
+    {
+      name: 'Colleges',
+      url: '/college',
+      icon: 'fas fa-university',
+    },
   ],
 }
 

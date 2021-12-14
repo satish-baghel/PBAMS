@@ -8,6 +8,7 @@ const ConnectDB = require('./api/config/dbs')
 //
 const userRoute = require('./api/route/user')
 const collegeRoute = require('./api/route/college')
+const certificateRoute = require('./api/route/certificate')
 //
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
@@ -24,6 +25,7 @@ app.use((req, res, next) => {
 
 app.use('/api/user', userRoute)
 app.use('/api/college', collegeRoute)
+app.use('/api/certificate', certificateRoute)
 
 app.use((req, res, next) => {
   const error = new Error('Not found')

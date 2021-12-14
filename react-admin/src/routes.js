@@ -31,6 +31,10 @@ const ApproveRequest = Loadable({
   loader: () => import('./views/ApproveRequest'),
   loading: Loading,
 })
+const College = Loadable({
+  loader: () => import('./views/College'),
+  loading: Loading,
+})
 const routes = [
   {
     path: '/appraisal',
@@ -60,6 +64,7 @@ const routes = [
     exact: true,
     component: StudentList,
   },
+
   {
     path: '/teacher',
     name: 'Teacher',
@@ -68,11 +73,25 @@ const routes = [
     component: Teacher,
   },
   {
+    path: '/college',
+    name: 'Colleges',
+    role: 1,
+    exact: true,
+    component: College,
+  },
+  {
     path: '/teacher/appraisal',
     name: 'Appraisal Detail',
     role: 2,
     exact: true,
     component: AppraisalView,
+  },
+  {
+    path: '/teacher/student',
+    name: 'Student',
+    role: 2,
+    exact: true,
+    component: StudentList,
   },
 ]
 

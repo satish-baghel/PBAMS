@@ -5,7 +5,6 @@ const Helper = require('../helper/')
 //
 exports.add = async (req, res) => {
   const objValidation = new niv.Validator(req.body, {
-    title: 'required',
     course_title: 'required',
   })
   const matched = await objValidation.check()
@@ -17,7 +16,7 @@ exports.add = async (req, res) => {
   const { title, course_title } = req.body
   let newObj = {}
   console.log(req.file)
-  newObj['title'] = title
+
   newObj['course_title'] = course_title
   newObj['document'] = `${req.file.destination}${req.file.filename}`
   newObj['user_id'] = req.userData._id
@@ -41,7 +40,6 @@ exports.add = async (req, res) => {
 exports.update = async (req, res) => {
   const { id } = req.params
   const objValidation = new niv.Validator(req.body, {
-    title: 'required',
     course_title: 'required',
   })
   const matched = await objValidation.check()
@@ -53,13 +51,10 @@ exports.update = async (req, res) => {
   const { title, course_title } = req.body
   let updateObj = {}
 
-  updateObj['title'] = title
   updateObj['course_title'] = course_title
   if (req.file) {
     updateObj['document'] = `${req.file.destination}${req.file.filename}`
   }
-
-  updateObj['user_id'] = req.userData._id
 
   try {
     const result = await CertificateDB.findByIdAndUpdate(
@@ -121,7 +116,7 @@ exports.getAll = async (req, res) => {
   try {
     const certificateAggregate = CertificateDB.aggregate([
       { $match: matchObj },
-      { $sort: { createAt: -1 } },
+      { $sort: { createdAt: -1 } },
     ])
     const result = await CertificateDB.aggregatePaginate(
       certificateAggregate,
@@ -130,7 +125,6 @@ exports.getAll = async (req, res) => {
 
     for (let i = 0; i < result.docs.length; i++) {
       const element = result.docs[i]
-      console.log('file: college.js -> line 76 -> element', element)
       element.document = await Helper.getValidImage(element.document)
     }
     return res

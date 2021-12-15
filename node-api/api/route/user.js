@@ -19,5 +19,7 @@ router.get('/auth', adminAuth, userController.auth)
 router.get('/verify-email', userController.verifyEmail)
 router.put('/approve/:id', adminAuth, userController.userApprove)
 router.get('/list', adminAuth, userController.UserList)
+router.patch('/:id', adminAuth, userController.userDetails)
+router.patch('/certificate/:id', adminAuth, userController.userCertificate)
 
 module.exports = router

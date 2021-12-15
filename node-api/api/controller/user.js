@@ -5,6 +5,8 @@ var jwt = require('jsonwebtoken')
 const { base64encode, base64decode } = require('nodejs-base64')
 const Email = require('../helper/email')
 const Helper = require('../helper')
+const mongoose = require('mongoose')
+const CertificateDB = require('../models/certificate')
 /**
  *  { [admin, user, teacher ] registration } use
  */
@@ -274,6 +276,62 @@ exports.UserList = async (req, res) => {
       message: 'user list has been retrieved',
       result: result,
     })
+  } catch (err) {
+    return res.status(500).json({
+      message: 'error occurred please try again later',
+      error: err.message,
+    })
+  }
+}
+
+exports.userDetails = async (req, res) => {
+  const { id } = req.params
+  try {
+    const result = await UserDB.aggregate([
+      { $match: { _id: mongoose.Types.ObjectId(id) } },
+      {
+        $lookup: {
+          from: 'colleges',
+          localField: 'college',
+          foreignField: '_id',
+          as: 'collegeData',
+        },
+      },
+      {
+        $unwind: '$collegeData',
+      },
+    ])
+    for (let i = 0; i < result.length; i++) {
+      const element = result[i]
+      element.profilePic = await Helper.getValidImageUrl(
+        element.profilePic,
+        element.fullName
+      )
+    }
+    return res
+      .status(200)
+      .json({ message: 'User has been retrieved ', result: result })
+  } catch (err) {
+    return res.status(500).json({
+      message: 'error occurred please try again later',
+      error: err.message,
+    })
+  }
+}
+
+exports.userCertificate = async (req, res) => {
+  const { id } = req.params
+  try {
+    const result = await CertificateDB.aggregate([
+      { $match: { user_id: mongoose.Types.ObjectId(id) } },
+    ])
+    for (let i = 0; i < result.length; i++) {
+      const element = result[i]
+      element.document = await Helper.getValidImage(element.document)
+    }
+    return res
+      .status(200)
+      .json({ message: 'User has been retrieved ', result: result })
   } catch (err) {
     return res.status(500).json({
       message: 'error occurred please try again later',

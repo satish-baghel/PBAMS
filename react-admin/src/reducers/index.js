@@ -5,6 +5,7 @@ import studentReducers from './studentReducers'
 import teacherReducers from './teacherReducers'
 import approveReducer from './approveReducer'
 import collegeReducers from './collegeReducer'
+import certificateReducer from './certificateReducer'
 
 export default combineReducers({
   auth: authReducers,
@@ -13,4 +14,5 @@ export default combineReducers({
   teacher: teacherReducers,
   approve: approveReducer,
   college: collegeReducers,
+  certificate: certificateReducer,
 })

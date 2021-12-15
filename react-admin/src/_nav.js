@@ -47,3 +47,12 @@ export const TeacherNav = {
     },
   ],
 }
+export const StudentNav = {
+  items: [
+    {
+      name: 'Certificate',
+      url: '/certificate',
+      icon: 'fa fa-certificate',
+    },
+  ],
+}

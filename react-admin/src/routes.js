@@ -35,6 +35,14 @@ const College = Loadable({
   loader: () => import('./views/College'),
   loading: Loading,
 })
+const Certificate = Loadable({
+  loader: () => import('./views/Certificate'),
+  loading: Loading,
+})
+const StudentDetail = Loadable({
+  loader: () => import('./views/Students/StudentDetail'),
+  loading: Loading,
+})
 const routes = [
   {
     path: '/appraisal',
@@ -64,6 +72,13 @@ const routes = [
     exact: true,
     component: StudentList,
   },
+  {
+    path: '/student/:id',
+    name: 'Student Detail',
+    role: 1,
+    exact: true,
+    component: StudentDetail,
+  },
 
   {
     path: '/teacher',
@@ -92,6 +107,13 @@ const routes = [
     role: 2,
     exact: true,
     component: StudentList,
+  },
+  {
+    path: '/certificate',
+    name: 'Certificate',
+    role: 3,
+    exact: true,
+    component: Certificate,
   },
 ]
 

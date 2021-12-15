@@ -23,7 +23,7 @@ import { useSelector } from 'react-redux'
 // routes config
 import routes from '../../routes'
 
-import { AdminNav, TeacherNav } from '../../_nav'
+import { AdminNav, TeacherNav, StudentNav } from '../../_nav'
 
 // const DefaultAside = React.lazy(() => import("./DefaultAside"));
 const DefaultFooter = React.lazy(() => import('./DefaultFooter'))
@@ -49,6 +49,9 @@ const DefaultLayout = (props) => {
   }
   if (admin && admin.role === 2) {
     navigation = TeacherNav
+  }
+  if (admin && admin.role === 3) {
+    navigation = StudentNav
   }
   //
   // useEffect(() => {}, [admin])
@@ -99,7 +102,10 @@ const DefaultLayout = (props) => {
                 {admin && admin.role === 2 && (
                   <Redirect from='/' to='/teacher/student' />
                 )}
-                {!admin && <Redirect from='/' to='/certificate' />}
+                {admin && admin.role === 3 && (
+                  <Redirect from='/' to='/certificate' />
+                )}
+                {!admin && <Redirect from='/' to='/login' />}
               </Switch>
             </Suspense>
           </Container>

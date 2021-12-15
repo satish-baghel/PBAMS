@@ -134,7 +134,7 @@ const Index = (props) => {
                               />
                             </td>
                             <td>
-                              <Link to='/appraisal/view'>
+                              <Link to={`/student/${teacher._id}`}>
                                 <Button className='btn-brand btn-twitter'>
                                   <i className='fa fa-eye'></i>
                                 </Button>

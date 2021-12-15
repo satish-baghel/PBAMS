@@ -61,3 +61,12 @@ export const register = (data) => async (dispatch) => {
   const res = await axios.post(`${PROXY}user`, body, config)
   return res
 }
+export const userDetail = (id) => async (dispatch) => {
+  const res = await axios.patch(`${PROXY}user/${id}`)
+  return res
+}
+
+export const userCertificate = (id) => async (dispatch) => {
+  const res = await axios.patch(`${PROXY}user/certificate/${id}`)
+  return res
+}

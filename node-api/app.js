@@ -12,6 +12,7 @@ const certificateRoute = require('./api/route/certificate')
 //
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
+app.use('/upload', express.static('upload'))
 ConnectDB()
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*')
